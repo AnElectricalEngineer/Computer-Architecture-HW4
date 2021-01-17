@@ -2,13 +2,13 @@
 
 #include "core_api.h"
 #include "sim_api.h"
+#include <vector>
+#include <iostream>
+
 
 #include <stdio.h>
-#include <iostream>
-#include <vector>
 
 using namespace std;
-
 //class that contains information on one thread
 class thread {
 public:
@@ -31,7 +31,7 @@ private:
     int loadCycles_;
     int storeCycles_;
 };
-vector<thread> blockThreadSim, finegrainedThreadSim;//global threads vector
+vector<thread> blockThreadSim, finegrainedThreadSim;//global thread vectors
 int blockInstructionNum, blockCycles, finegrainInstructionNum, finegrainCycles;//global counters
 
 //initialisation
@@ -40,14 +40,12 @@ thread::thread() :numThread_(0), lastCommand_(0), finished_(false), waiting_(0),
         regs_.reg[i] = 0;
     }
 }
-
 //copy-constructor
 thread::thread(const thread& rhs) :numThread_(rhs.numThread_), lastCommand_(rhs.lastCommand_), finished_(rhs.finished_), waiting_(rhs.waiting_), loadCycles_(rhs.loadCycles_), storeCycles_(rhs.storeCycles_) {
     for (int i = 0; i < REGS_COUNT; i++) {
         regs_.reg[i] = rhs.regs_.reg[i];
     }
 }
-
 //getters/setters
 int thread::getRegs(int i) {
     return regs_.reg[i];
@@ -73,7 +71,6 @@ void thread::waitCycles(int num) {
     if (waiting_ < 0)waiting_ = 0;
     return;
 }
-
 //thread executing next command
 int thread::exeCommand() {
     Instruction inst;
@@ -132,7 +129,6 @@ int thread::exeCommand() {
     lastCommand_++;
     return 0;
 }
-
 //returns is the system in idle state- no thread running
 bool isIdle(vector<thread> threads, int numThreads) {
     for (int i = 0; i < numThreads; i++) {
@@ -142,7 +138,6 @@ bool isIdle(vector<thread> threads, int numThreads) {
     }
     return true;
 }
-
 //returns did all the threads hit HALT
 bool allThreadsFinished(vector<thread> threads, int numThreads) {
     for (int i = 0; i < numThreads; i++) {
@@ -152,7 +147,6 @@ bool allThreadsFinished(vector<thread> threads, int numThreads) {
     }
     return true;
 }
-
 //make all the threads in the system to wait a numCycles of cecles
 void waitCycle(int numThreads, int numCycles, int num) {
     if (num == 1) {//for Blocked SM
@@ -167,7 +161,6 @@ void waitCycle(int numThreads, int numCycles, int num) {
     }
 
 }
-
 // find next available thread
 int findNextThread(int num, int numThreads, int currentThread) {
     if (num == 1) {//for Nlocked SM
@@ -262,7 +255,6 @@ void CORE_BlockedMT() {
         }
     }
 }
-
 //execute FineGrained SM
 void CORE_FinegrainedMT() {
     int loadLatency = SIM_GetLoadLat();
